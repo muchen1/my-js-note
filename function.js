@@ -106,3 +106,79 @@ addPrivateProperty(o,"Name",function(x){return typeof x=="string"; });
 o.setName("Frank");//设置属性值
 console.log(o.getName());//得到属性
 o.setName(o)//试图设置一个错误类型的值
+
+
+
+//不完成函数
+/*不完全函数是一种函数变换技巧，即把一次完整的函数调用拆成多次函数调用，每次传入的实参都是
+完整实参的一部分，每个拆开的函数叫不完全函数，每次函数调用称作不完全调用，这种函数变换的特点
+是每次调用都返回一个函数，直到最终运行结果为止，如f(1,2,3,4,5,6)等价于f(1,2)(3,4)(5,6)*/
+//实现一个工具函数将类数组对象（或对象）转换为真正的数组
+//在后面的示例代码种用到了这个方法将arguments对象转换成真正的数组
+function array(a,n){
+	return Array.prototype.slice.call(a,n||0);
+}
+//这个函数的实参传递至左侧
+function partialLeft(f /*,...*/){
+	var args=arguments; //保存外部的实参数组
+	return function(){  //并返回这个函数
+		var a=array(args,1); //开始处理外部的第一个args
+		a=a.concat(array(arguments));//然后增加所有的内部实参
+		return f.apply(this,a);
+	}
+}
+//这个函数的实参传递至右侧
+function partialRight(f/*,...*/){
+	var args=arguments;   //保存外部的实参数组
+	return function(){ //返回这个数组
+		var a=array(arguments);  //从内部函数开始
+		a=a.concat(array(args,1)); //然后从外部第一个args开始添加
+		return f.apply(this,a);  //最后基于这个实参列表调用f()
+	}
+}
+
+//这个函数的实参被用作模板
+//实参列表中的undefined值被填充
+function partial(f /*,...*/){
+	var args=arguments;//保存外部实参数组
+	return function(){
+		var a=array(args,1);//从外部args开始
+		var i=0,j=0;
+		//遍历args，从内部实参填充undefined值
+		for(;i<a.length;i++)
+			if(a[i]===undefined) a[i]=arguments[j++];
+		//现在将剩下的内部实参都追加进去
+		a=a.concat(array(arguments,j));
+		return f.apply(this,a);
+	}
+}
+/*使用上述的函数*/
+//这个函数带有三个实参
+var f=function(x,y,z){return x*(y-z);};
+//注意着三个不完全调用之间的区别
+partialLeft(f,2)(3,4);
+partialRight(f,2)(3,4);
+partial(f,undefined,2)(3,4);
+
+
+//函数记忆
+/*记忆是一种编程技巧，本质上是牺牲算法的空间复杂度以换取更优的时间复杂度，在客户端js种代码的
+执行时间复杂度往往成为瓶颈，因此在大多数场景下，这种牺牲空间获取时间的做法以提升程序执行效率
+的做法是可取的*/
+//返回f()的带有记忆功能的版本
+//只有当f()的实参的字符串表示都不相同时它才会工作
+function memorize(f){
+	var cache={};//将值保存在闭包中
+    return function(){
+    	//将实参转换为字符串形式，并将其用作缓存的键
+    	var key=arguments.length+Array.prototype.join.call(arguments,",");
+    	if(key in cache) return cache[key];
+    	else return cache[key]=f.apply(this,arguments);
+    }
+}
+//当实现一个递归函数时，往往需要实现记忆功能
+var factorial=memorize(function(n){
+	return (n<=1)?1:n*factorial(n-1);
+});
+factorial(5); //对于1-4也有缓存
+
