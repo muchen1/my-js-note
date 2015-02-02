@@ -57,3 +57,22 @@ function classof(o){
 	if(o===undefined) return "Undefined";
 	return object.prototype.toString.call(o).slice(8,-1);
 }
+
+
+//一个用于定义简单类的函数
+function defineClass(
+	constructor,//用以设置实例的属性的函数（实例属性）
+	methods,//实例的方法，复制至原型中（实例方法）
+	statics)//类属性，复制至构造函数中(类)
+	{
+		if(methods) extend(constructor.prototype,methods);
+		if(statics) extend(constructor,statics);
+		return constructor;
+	}
+//这是Range类的另一个实现
+var SimpleRange=defineClass(function(f,t){this.f=f;this.t=t;},
+	{
+		includes:function(X){return this.f<=x&&x<=this.t;},
+		toString:function(){return this.f+"..."+this.t;}
+	},
+	{upto:function(t){return new SimpleRange(0,t);}});
