@@ -65,3 +65,51 @@ Set._v2s=function(val){
 	}
 }
 Set._v2s.next=100;//设置初始id的值
+//将集合转化为字符串的方法，toString方法
+Set.prototype.toString=function(){
+	var s="{",
+	i=0;
+	this.foreach(function(v){s+=((i++>0)?", ":"")+v;});
+	return s+="}";
+}
+//类似toString，但是对于所有的值都将调用toLocalString()
+Set.prototype.toLocalString=function(){
+	var s="{",i=0;
+	this.foreach(function(v){
+		if(i++>0) s+=", ";
+		if(v==null) s+=v;//null和undefined
+		else s+=v.toLocalString();//其他情况
+	});
+	return s+="}";
+}
+//将集合转换为值数组
+Set.prototype.toArray=function(){
+	var a=[];
+	this.foreach(function(v){a.push(v);});
+	return a;
+}
+//对于要从JSON转化为字符串的集合都被当做数组来对待
+Set.prototype.toJSON=Set.prototype.toArray;
+
+//比较Set类实例对象的方法
+Set.prototype.equals=function(that){
+	//一些次要情况的快捷处理
+	if(this===that) return true;
+	//如果that对象不是一个集合，它和this不相等
+	//我们用到了instanceof，使得这个方法可以用于Set的任何子类
+	//如果希望采用鸭式辩型的方法，可以降低检查的严格程度
+	//或者可以通过this.constructor==that.constructor来加强检查的严格程度
+	//注意，null和undeifined两个值是无法用于instantceof运算的
+	if(!(that instanceof Set)) return false;
+	//如果两个集合的大小不一样，则他们不相等
+	if(this.size()!=that.size()) return false;
+	//现在检查集合中元素是否完全相同
+	//如果两个集合不相等，则通过抛出异常来终止foreach循环
+	try{
+		this.foreach(function(v){if(!that.contains(v)) throw false;});
+		return true;   //所有的元素都匹配：两个集合相等
+	}catch(x){
+		if(x===false)return false;//如果集合中有元素在另外一个中不存在
+		throw x;                  //如果抛出异常
+	}
+}
