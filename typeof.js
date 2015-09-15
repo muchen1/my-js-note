@@ -105,6 +105,21 @@ String(undefined);  // 'undefined'
 
 
 
+/**
+ * Object类型，Object类型是所有类型的基础
+ * Object的每个实例都具有下列属性和方法：
+ * 1. constructor:保存着创建当前对象的函数，就是指向构造函数
+ * 2. hasOwnProperty(propertyName):用于检查给定的属性在当前对象实例中是不是存在(若该属性在原型中，则不算)
+ * 3. isPrototypeOf(object):用于检查传入的对象是否是传入对象的原型
+ * 4. propertyIsEnumerable(propertyName):用来检查给定的属性是否能够使用for－in语句来枚举
+ * 5. toLocalString(): 返回对象的字符串表示，该字符串与执行环境的地区对应
+ * 6. toString(): 返回对象的字符串表示
+ * 7. valueOf(): 返回对象的字符串、数值或布尔值表示。一般与toString()返回的相同
+ */
+var o = {};
+o.hasOwnProperty('name');
+
+
 
 
 
