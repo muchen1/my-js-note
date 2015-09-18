@@ -57,6 +57,43 @@ var newValue = oldValue >>> 5;   // 等于十进制的 134217726
 
 
 
+/**
+ * 布尔操作数
+ */
+// 逻辑非(!),处理规则如下
+console.log(!{});  // false,为对象时返回false，空对象也是
+console.log(!'');  // 空字符串返回true
+console.log(!'dai'); // 非空字符串返回false
+console.log(!0);   // 数字0返回true
+console.log(!3);console.log(!Infinity); // 非0数字，包括Infinity返回false
+console.log(!null);  // null返回true
+console.log(!NaN);  // true
+console.log(!undefined);  //true
+// 逻辑非操作符主要用于判断
+// 两个逻辑非一起用，获取操作符对应的boolean值，与Boolean() 函数返回值一样
+
+
+// 逻辑与操作符(&&),遵循规则如下
+// 如果有一个操作数是null,返回null
+// 如果有一个操作数是NaN,返回NaN
+// 如果有一个操作数是undefined,则返回undefined
+
+// 基于上述规则，逻辑与操作符除了使用判断外；还可以代替 if语句来完成逻辑语句
+
+
+// 逻辑或操作符(||),遵循逻辑如下：
+// 如果两个操作数是null,返回null
+// 如果两个操作数是NaN,返回NaN
+// 如果两个操作数是undefined,则返回undefined
+
+// 逻辑或操作符除了做判断外，最常用的是赋值操作
+var temp = isBoolean || default;
+
+
+
+
+
+
 
 
 
