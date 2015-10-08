@@ -159,6 +159,65 @@ $.slice = window.dispatchEvent ? function (nodes, start, end) {
 
 
 
+/**
+ * 安全的类型检测
+ */
+// isArray
+function isArray(value) {
+    return Object.prototype.toString === '[object Array]';
+}
+// 基于这个思路,可以实现原生函数以及正则表达式的检测
+function isFunction(value) {
+    return Object.prototype.toString === '[object Function]';
+}
+function isRegExp(value) {
+    return Obejct.prototype.toString === '[object RegExp]';
+}
+// Object的toString方法不能检测非原生构造函数的构造函数名，开发人员自定义的任何构造函数都将返回 [object Object]
+// 所有可以如下判断原生的json对象
+var isNativeJSON = window.JSON && Object.prototype.toString === '[object JSON]';
+
+
+// 在jQuery中有判断是不是纯净的Javascript对象的方法
+jquery.isPlainObject = function(obj) {
+    // 首先排除基础类型不为object的类型，然后是DOM节点以及window对象
+    if (jQuery.type(obj) !== 'object' || obj.nodeType || jQuery.isWindow(obj)) {
+        return false;
+    }
+    // 然后回溯它的最近的原型对象是否有isPrototypeOf,
+    // 旧版本IE的一些原生对象没有暴露constructor、prototype，因此会在这里过滤
+    try {
+        if (obj.constructor && !hasOwn.call(obj.constructor.prototype, 'isPrototypeOf')) {
+            return false;
+        }
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+
+// isArrayLike也是一个常用的方法，但判定一个数组难，唯一的辨识手段是它应该有一个大于或等于零的整型length属性。
+// 此外，还有一些共识，如window与函数和元素节点(如form元素)不算类数组，虽然它们都满足前面的条件
+function isArraylike(obj) {
+    var length = obj.length;
+    var type = jQuery.type(obj);
+    // 判断是不是window对象
+    if (jQuery.isWindow(obj)) {
+        return false;
+    }
+    if (obj.nodeType === 1 && length) {
+        return true;
+    }
+    return
+        // 如果是array的话，直接返回true；若为false则继续
+        type === 'array'
+        // 如果是type是function，则返回false；若为true则继续
+        || type !== 'function'
+        // 
+        && (length === 0 || typeof length === 'number' && length > 0 && (length - 1) in obj);
+}
+
 
 
 
