@@ -218,6 +218,18 @@ function isArraylike(obj) {
         && (length === 0 || typeof length === 'number' && length > 0 && (length - 1) in obj);
 }
 
+// jQuery中type方法
+class2type = {};
+jQuery.each('Boolean Number String Function Array Date RegExp Object'.split(' '),
+        function(i, name) {
+            class2type['[object ' + name + ']'] = name.toLowerCase();
+        });
+jQuery.type = function(obj) {
+    return obj == null ?
+        String(obj) :
+        class2type[toString.call(obj)] || 'object';
+}
+
 
 
 
